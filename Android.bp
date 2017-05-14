@@ -14,6 +14,14 @@ cflags_arm = [
     "-DARM_NEON_ADLER32",
     "-DARM_NEON_CHUNKSET",
     "-DARM_NEON_SLIDEHASH",
+    // Since we're building for the platform, we claim to be Linux rather than
+    // Android so we use getauxval() directly instead of the NDK
+    // android_getCpuFeatures which isn't available to us anyway.
+    "-DARMV8_OS_LINUX",
+    // Testing with zlib_bench shows -O3 is a win for ARM but a bit of a wash
+    // for x86, so match the BUILD file in only enabling this for ARM.
+    "-O3",
+    "-funroll-loops",
 ]
 
 // The *device* x86 configuration (with *higher* CPU feature requirements).
