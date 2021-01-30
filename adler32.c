@@ -13,6 +13,14 @@ Z_INTERNAL uint32_t adler32_c(uint32_t adler, const unsigned char *buf, size_t l
     uint32_t sum2;
     unsigned n;
 
+#if defined(ADLER32_SIMD_SSSE3)
+    if (buf != Z_NULL && len >= 64 && x86_cpu_enable_ssse3)
+        return adler32_simd_(adler, buf, len);
+#elif defined(ADLER32_SIMD_NEON)
+    if (buf != Z_NULL && len >= 64)
+        return adler32_simd_(adler, buf, len);
+#endif
+
     /* split Adler-32 into component sums */
     sum2 = (adler >> 16) & 0xffff;
     adler &= 0xffff;
